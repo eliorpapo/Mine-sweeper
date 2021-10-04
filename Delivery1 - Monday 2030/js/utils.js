@@ -1,5 +1,6 @@
 function renderBoard(borad, selector) {
-  var strHTML = `<tbody> <td class="table-header" colspan="${borad.length}">`;
+  var strHTML = `<td class="table-header" colspan="${borad.length}">`;
+  var minesLeft = gLevel.MINES - gGame.markedCount;
   strHTML += `<div class="bombs-marked">${minesLeft}</div>`;
   strHTML += `<div class="smiley"><button onclick="reset()" >${smiely}</button></div>`;
   strHTML += `<div class="timer">${gSecHundreds}${gSecTens}${gSecUnits}</div></td>`;
@@ -28,7 +29,6 @@ function renderBoard(borad, selector) {
     }
     strHTML += '</tr>';
   }
-  strHTML += '</tbody>';
   var elContainer = document.querySelector(selector);
   elContainer.innerHTML = strHTML;
 }
@@ -102,4 +102,25 @@ function isLocationEmpty(mines, newMine) {
     }
   }
   return false;
+}
+
+function preventRightClickDefault() {
+  var elApp = document.querySelector(`.app`);
+  elApp.oncontextmenu = (e) => {
+    e.preventDefault();
+  };
+}
+
+function resetTimer() {
+  gSecUnits = 0;
+  gSecTens = 0;
+  gSecHundreds = 0;
+}
+
+function resetGGame() {
+  gGame = {
+    isOn: false,
+    shownCount: 0,
+    markedCount: 0,
+  };
 }
