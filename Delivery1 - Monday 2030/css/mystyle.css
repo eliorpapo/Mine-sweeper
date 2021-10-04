@@ -1,0 +1,51 @@
+body {
+  text-align: center;
+}
+table {
+margin-top: 100px;
+  border-collapse: collapse;
+  font-size: 150%;
+  display: inline-block;
+  border-top: 0;
+  background-color: #c2c2c2;
+  padding: 16px;
+  border-width: 4px;
+  border-style: solid;
+  border-right-color: #999;
+  border-bottom-color: #999;
+  border-left-color: white;
+  border-top-color: white;
+}
+
+table td {
+  background-color: rgb(195, 195, 195);
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  min-height: 40px;
+  border: 1px solid black;
+}
+
+.clicked {
+  background-color: white;
+}
+
+.smiley {
+  display: inline-block;
+}
+
+.timer {
+  left: 0;
+  position: relative;
+  float: right;
+}
+
+.bombs-marked {
+  right: 0;
+  position: relative;
+  float: left;
+}
+button {
+  height: 35px;
+  font-size: 0.8em;
+}

@@ -1,0 +1,105 @@
+function renderBoard(borad, selector) {
+  var strHTML = `<tbody> <td class="table-header" colspan="${borad.length}">`;
+  strHTML += `<div class="bombs-marked">${minesLeft}</div>`;
+  strHTML += `<div class="smiley"><button onclick="reset()" >${smiely}</button></div>`;
+  strHTML += `<div class="timer">${gSecHundreds}${gSecTens}${gSecUnits}</div></td>`;
+
+  for (var i = 0; i < borad.length; i++) {
+    strHTML += '<tr>';
+    for (var j = 0; j < borad[0].length; j++) {
+      var cell;
+      var className = '';
+      if (borad[i][j].isMarked) {
+        className += 'flaged ';
+        cell = FLAG;
+      } else {
+        if (borad[i][j].isShown) {
+          className += 'clicked ';
+          if (borad[i][j].isMine) {
+            cell = MINE;
+          } else if (borad[i][j].minesAroundCount === 0) {
+            cell = '';
+          } else cell = borad[i][j].minesAroundCount;
+        } else cell = '';
+      }
+      className += `cell cell-${i}-${j} noContextMenu`;
+      var tdId = `cell-${i}-${j}`;
+      strHTML += `<td id="${tdId} " onclick ="cellClicked(this)" class="${className}">${cell}  </td>`;
+    }
+    strHTML += '</tr>';
+  }
+  strHTML += '</tbody>';
+  var elContainer = document.querySelector(selector);
+  elContainer.innerHTML = strHTML;
+}
+
+function buildBoard(size) {
+  var board = [];
+  for (var i = 0; i < size; i++) {
+    var row = [];
+    for (var j = 0; j < size; j++) {
+      row.push(createCell(i, j));
+    }
+    board.push(row);
+  }
+  return board;
+}
+
+// location such as: {i: 2, j: 7}
+function renderCell(location, value) {
+  // Select the elCell and set the value
+  var elCell = document.querySelector(`.cell${location.i}-${location.j}`);
+  elCell.innerHTML = value;
+}
+
+function getEmptyCells(board) {
+  var emptyCells = [];
+  for (var i = 0; i < board.length; i++) {
+    for (var j = 0; j < board[0].length; j++) {
+      if (board[i][j] === '') {
+        emptyCells.push({ i: i, j: j });
+      }
+    }
+  }
+  return emptyCells;
+}
+
+function countNegs(board, rowIdx, colIdx) {
+  var count = 0;
+  for (var i = rowIdx - 1; i <= rowIdx + 1; i++) {
+    if (i < 0 || i > board.length - 1) {
+      continue;
+    }
+    for (var j = colIdx - 1; j <= colIdx + 1; j++) {
+      if (j < 0 || j > board[0].length - 1) {
+        continue;
+      }
+      if (i === rowIdx && j === colIdx) continue;
+      if (board[i][j].isMine) count++;
+    }
+  }
+  return count;
+}
+function getCellCoord(strCellId) {
+  var parts = strCellId.split('-');
+  var coord = { i: +parts[1], j: +parts[2] };
+  return coord;
+}
+
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1) + min); //The maximum is inclusive and the minimum is inclusive
+}
+
+function isLocationEmpty(mines, newMine) {
+  for (var i = 0; i < mines.length; i++) {
+    if (
+      mines[i].rowIdx === newMine.rowIdx &&
+      mines[i].colIdx === newMine.colIdx
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
