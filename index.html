@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mine-Sweeper</title>
+    <link rel="stylesheet" href="css/mystyle.css" />
+  </head>
+  <body onload="init()">
+    <h1>
+      Mine-Sweeper<span>
+        <img class="mine-img" src="imgs/mine.png" alt="Mine-img"
+      /></span>
+    </h1>
+    <h3 class="lifes-el"></h3>
+    <h3 onclick="activeHint()" class="hints-el"></h3>
+    <div class="app">
+      <div>
+        <button class="difficulty-btn" onclick="setSize(4)">Easy-4X4</button>
+        <button class="difficulty-btn" onclick="setSize(8)">Medium-8X8</button>
+        <button class="difficulty-btn" onclick="setSize(12)">Hard-12X12</button>
+        <button class="safe-click" onclick="activeSafeClick()">
+          Safe-click
+        </button>
+        <br />
+        <p class="safe-available">3 pressed left</p>
+      </div>
+      <button onclick="undo()">undo</button>
+
+      <table>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="storage">
+      <h2>Best Time:</h2>
+      <ul>
+        Easy:
+        <span class="easy-record"></span>
+        sec
+      </ul>
+      <hr />
+      <ul>
+        Medium:
+        <span class="medium-record"></span>
+        sec
+      </ul>
+      <hr />
+      <ul>
+        Hard:
+        <span class="hard-record"></span>
+        sec
+      </ul>
+    </div>
+    <p class="footer">@Elior Papo</p>
+    <script src="js/utils.js"></script>
+    <script src="js/myscripts.js"></script>
+  </body>
+</html>

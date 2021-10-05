@@ -1,0 +1,184 @@
+body {
+  text-align: center;
+  background: url('../imgs/background.png') no-repeat center center fixed;
+  background-size: cover;
+  height: 100%;
+}
+h1 {
+  margin-top: 60px;
+  margin-bottom: 10px;
+  font-size: 40px;
+}
+h2 {
+  text-decoration: underline;
+}
+
+h3 {
+  display: inline-block;
+  margin-left: 100px;
+  margin-right: 100px;
+}
+
+.hints-el {
+  cursor: pointer;
+}
+
+.mine-img {
+  width: 40px;
+}
+
+.safe-available{
+  margin-left: 910px;
+  margin-top: 0;
+  font-weight: bold;
+}
+
+table {
+  border-collapse: collapse;
+  font-size: 150%;
+  display: inline-block;
+  border-top: 0;
+  background-color: #c2c2c2;
+  padding: 16px;
+  border-width: 4px;
+  border-style: solid;
+}
+
+table td {
+  background-color: gray;
+  border: 1px solid;
+}
+
+td {
+  font-weight: bold;
+  height: 40px;
+  width: 40px;
+  background-color: #c0c0c0;
+  border: 1.5px solid;
+  border-top-color: #ffffff;
+  border-right-color: #7b7b7b;
+  border-bottom-color: #7b7b7b;
+  border-left-color: #ffffff;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.table-header {
+  background-color: #c2c2c2;
+}
+
+.cell:hover {
+  cursor: pointer;
+  background-color: #7b7b7b;
+}
+
+.clicked {
+  background-color: white;
+  cursor: auto;
+}
+
+.clicked:hover {
+  cursor: auto;
+  background-color: white;
+}
+
+.blow-up {
+  background-color: red;
+}
+
+button {
+  height: 35px;
+  font-size: 0.8em;
+}
+.difficulty-btn ,.safe-click {
+  border: 3px solid black;
+  color: black;
+  font-weight: 800;
+  background: transparent;
+  height: auto;
+  min-width: 100px;
+  text-transform: uppercase;
+  border-radius: 8px;
+  font-size: 15px;
+  display: inline-block;
+  padding: 10px 16px;
+  margin: 0 3px 0 0;
+  cursor: pointer;
+  transition: background 1s;
+  transition-timing-function: ease-in-out;
+  margin: 10px;
+}
+
+.difficulty-btn:first-of-type {
+  border-radius: 20px 8px 8px 20px;
+}
+
+.difficulty-btn:last-of-type {
+  border-radius: 8px 20px 20px 8px;
+}
+
+.safe-click{
+  position: absolute;
+  margin-left: 150px;
+  background: transparent;
+  transition: background 1s;
+}
+
+.difficulty-btn:hover, .safe-click:hover{
+  background: white;
+}
+
+.mines-marked {
+  font-weight: bold;
+  color: blue;
+  right: 0;
+  position: relative;
+  float: left;
+}
+
+.smiley {
+  display: inline-block;
+}
+
+.smiley:hover {
+  background-color: lightgray;
+  color: slategray;
+  cursor: pointer;
+}
+
+.timer {
+  color: red;
+  font-weight: bold;
+  left: 0;
+  position: relative;
+  float: right;
+}
+
+.storage {
+  border: 3px solid;
+  border-top-color: #ffffff;
+  border-right-color: black;
+  border-bottom-color: black;
+  border-left-color: #ffffff;
+  padding: 10px;
+  position: absolute;
+  left: 0;
+  top: 100px;
+  margin: 50px auto;
+  font-size: 1.5em;
+  color: black;
+  background: transparent;
+}
+
+ul {
+  padding: 0%;
+  text-align: center;
+}
+
+.footer {
+  position: absolute;
+  left: 60px;
+  bottom: 20px;
+  font-weight: bold;
+  font-size: 1em;
+}
