@@ -56,6 +56,9 @@ var gDifficulty = `easy`;
 var gTime;
 
 function init() {
+  gEasyRecord = localStorage.getItem('easyHighscore');
+  gMediumRecord = localStorage.getItem('mediumHighscore');
+  gHardRecord = localStorage.getItem('hardHighscore');
   gPreMoves = [];
   gMinesByUser = 0;
   gMinesBySevenBoom = 0;
