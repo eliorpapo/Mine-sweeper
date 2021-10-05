@@ -7,10 +7,12 @@ var HEART = `❤️`;
 var gLifes = 2;
 var HINT = `💡`;
 var gHints = 3;
+var gPreMoves = [];
 
 var gTimerInterval;
 
 preventRightClickDefault();
+var gMinesBySevenBoom;
 
 var gEasyRecord;
 isNewRecord(`easy`, gEasyRecord);
@@ -48,11 +50,15 @@ var gIsHintActive;
 var gSafeRemain;
 var gBoard;
 var gCell;
+var gManuallOn = false;
 
 var gDifficulty = `easy`;
 var gTime;
 
 function init() {
+  gPreMoves = [];
+  gMinesByUser = 0;
+  gMinesBySevenBoom = 0;
   gTime = 0;
   gEmptyNegs = [];
   gSmiely = `😃`;
@@ -68,7 +74,7 @@ function init() {
   gHints = 3;
   updateHintsEl();
   gSafeRemain = 3;
-  updateSafeClick();
+  updateSafeClickEl();
 }
 
 function setSize(size) {
@@ -150,24 +156,15 @@ function setMinesNegsToAll() {
     }
   }
 }
-
+//// bonus Manually positioned mines
 function manuallyPositionedMines() {
+  gManuallOn = gManuallOn ? false : true;
+  console.log(gManuallOn);
+  if (gManuallOn) init();
   if (gMinesByUser === gLevel.MINES) {
     startManuallyGame();
     return;
   }
-  gTime = 0;
-  gSmiely = `😃`;
-  clearInterval(gTimerInterval);
-  gTimerInterval = null;
-  resetTimer();
-  gLifes = gLevel.SIZE === 4 ? 2 : 3;
-  updateLifesEl();
-  gIsHintActive = false;
-  gHints = 3;
-  updateHintsEl();
-  gSafeRemain = 3;
-  updateSafeClick();
   gMinesByUser = 0;
   gBoard = buildBoard(gLevel.SIZE);
   renderBoardMinesByUser(gBoard, `tbody`);
@@ -210,6 +207,8 @@ function isUserReadyToStart() {
   elPutMineBtn.classList.add(`ready`);
 }
 
+//  end bonus Manually positioned mines
+
 function setMinesNegsCount(cell) {
   var rowIdx = cell.location.i;
   var colIdx = cell.location.j;
@@ -218,6 +217,7 @@ function setMinesNegsCount(cell) {
 }
 
 function cellClicked(elCell) {
+  createMove();
   var location = getCellCoord(elCell.id); //find curr cell
   var rowIdx = location.i;
   var colIdx = location.j;
@@ -336,7 +336,7 @@ function blowUp(cell) {
     renderBoard(gBoard, `tbody`);
   }, 1000);
 }
-
+// bonus Add support for HINTS
 function activeHint() {
   if (gIsHintActive) {
     gIsHintActive = false;
@@ -373,7 +373,32 @@ function useHint(currCell) {
   }, 1000);
 }
 
-function updateSafeClick() {
+function toogleNegsDisplay(currCell, preShownCells) {
+  var location = currCell.location;
+  for (var i = location.i - 1; i <= location.i + 1; i++) {
+    if (i < 0 || i > gBoard.length - 1) {
+      continue;
+    }
+    for (var j = location.j - 1; j <= location.j + 1; j++) {
+      if (j < 0 || j > gBoard[0].length - 1) continue;
+      var newCell = gBoard[i][j];
+      newCell.isShown = gIsHintActive ? true : false;
+    }
+  }
+  for (var i = 0; i < preShownCells.length; i++) {
+    var preShownCell = preShownCells[i];
+    var rowIdx = preShownCell.location.i;
+    var colIdx = preShownCell.location.j;
+    var newCell = gBoard[rowIdx][colIdx];
+    newCell.isShown = true;
+  }
+  renderBoard(gBoard, `tbody`);
+}
+
+//end  bonus Add support for HINTS
+
+//  bonus Safe click
+function updateSafeClickEl() {
   var elsSafeRemain = document.querySelector(`.safe-available`);
   elsSafeRemain.innerText = `${gSafeRemain} pressed left`;
 }
@@ -395,11 +420,17 @@ function activeSafeClick() {
   var safeCellId = getCellId(safeCell[0]);
   var elSafeCell = document.querySelector(`#${safeCellId}`);
   elSafeCell.style.backgroundColor = 'lightblue';
-  updateSafeClick();
+  updateSafeClickEl();
 }
+
+//end  bonus Safe click
 
 function checkWin() {
   var safeCellsNum = gLevel.SIZE * gLevel.SIZE - gLevel.MINES;
+  console.log(`safeCellsNum`, safeCellsNum);
+  console.log(`gGame.shownCount`, gGame.shownCount);
+  console.log(`gGame.markedCount`, gGame.markedCount);
+  console.log(`gLevel.MINES`, gLevel.MINES);
   if (gGame.shownCount === safeCellsNum && gGame.markedCount === gLevel.MINES) {
     gSmiely = `😎`;
     clearInterval(gTimerInterval);
@@ -436,27 +467,7 @@ function addRightClickListener() {
   }
 }
 
-function toogleNegsDisplay(currCell, preShownCells) {
-  var location = currCell.location;
-  for (var i = location.i - 1; i <= location.i + 1; i++) {
-    if (i < 0 || i > gBoard.length - 1) {
-      continue;
-    }
-    for (var j = location.j - 1; j <= location.j + 1; j++) {
-      if (j < 0 || j > gBoard[0].length - 1) continue;
-      var newCell = gBoard[i][j];
-      newCell.isShown = gIsHintActive ? true : false;
-    }
-  }
-  for (var i = 0; i < preShownCells.length; i++) {
-    var preShownCell = preShownCells[i];
-    var rowIdx = preShownCell.location.i;
-    var colIdx = preShownCell.location.j;
-    var newCell = gBoard[rowIdx][colIdx];
-    newCell.isShown = true;
-  }
-  renderBoard(gBoard, `tbody`);
-}
+// bonus Best Score
 
 function isNewRecord(difficulty, time) {
   if (typeof Storage !== 'undefined') {
@@ -505,6 +516,104 @@ function isNewRecord(difficulty, time) {
   }
 }
 
-function SevenBoom(){
-  console.log(`7 boom`);
+//  end bonus Best Score
+
+// bonus seven boom
+
+function sevenBoom() {
+  gTime = 0;
+  gSmiely = `😃`;
+  clearInterval(gTimerInterval);
+  gTimerInterval = null;
+  resetTimer();
+  gLifes = gLevel.SIZE === 4 ? 2 : 3;
+  updateLifesEl();
+  gIsHintActive = false;
+  gHints = 3;
+  updateHintsEl();
+  gSafeRemain = 3;
+  updateSafeClickEl();
+  gMinesByUser = 0;
+  gBoard = buildBoard(gLevel.SIZE);
+  gGame.isOn = true;
+  putMineBySevenBoom();
+}
+
+function putMineBySevenBoom() {
+  var count = 0;
+  gMinesBySevenBoom = 0;
+  for (var i = 0; i < gBoard.length; i++) {
+    for (var j = 0; j < gBoard[0].length; j++) {
+      var countUnit = count % 10;
+      var countTens = (count - countUnit) / 10;
+      if (
+        (count !== 0 && count % 7 === 0) ||
+        countUnit === 7 ||
+        countTens === 7
+      ) {
+        gBoard[i][j].isMine = true;
+        gMinesBySevenBoom++;
+      }
+      count++;
+    }
+  }
+  setMinesNegsToAll();
+  renderBoard(gBoard, `tbody`);
+}
+
+//  end bonus seven boom
+
+//bonus undo
+
+function undo() {
+  if (gPreMoves.length <= 1) {
+    init();
+    return;
+  }
+  var preMove = gPreMoves.pop();
+  gLifes = preMove.gLifes;
+  updateLifesEl();
+  gHints = preMove.gHints;
+  updateHintsEl();
+  gSafeRemain = preMove.gSafeRemain;
+  updateSafeClickEl();
+  gGame.isOn = preMove.gGame[0];
+  gGame.shownCount = preMove.gGame[1];
+  gGame.markedCount = preMove.gGame[2];
+  gIsHintActive = false;
+  gSmiely = preMove.gSmiely;
+  gBoard = preMove.gBoard;
+  renderBoard(gBoard, `tbody`);
+}
+
+function createMove() {
+  var move = {
+    gLifes: gLifes,
+    gHints: gHints,
+    gSafeRemain: gSafeRemain,
+    gGame: [gGame.isOn, gGame.shownCount, gGame.markedCount],
+    gSmiely: gSmiely,
+    gBoard: getgBoard(),
+  };
+  gPreMoves.push(move);
+}
+
+function getgBoard() {
+  var board = [];
+  for (var i = 0; i < gBoard.length; i++) {
+    var row = [];
+    for (var j = 0; j < gBoard[0].length; j++) {
+      var currCell = gBoard[i][j];
+      var preCell = {
+        minesAroundCount: currCell.minesAroundCount,
+        isShown: currCell.isShown,
+        isMine: currCell.isMine,
+        isMarked: currCell.isMarked,
+        location: currCell.location,
+      };
+      row.push(preCell);
+    }
+    board.push(row);
+  }
+  return board;
 }

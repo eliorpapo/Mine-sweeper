@@ -42,6 +42,7 @@ table {
   padding: 16px;
   border-width: 4px;
   border-style: solid;
+  margin-right: 25px;
 }
 
 table td {
@@ -94,7 +95,8 @@ button {
 .difficulty-btn,
 .safe-click,
 .manually-positioned-mines,
-.seven-boom {
+.seven-boom,
+.undo {
   border: 3px solid black;
   color: black;
   font-weight: 800;
@@ -134,8 +136,8 @@ button {
 
 .seven-boom {
   position: absolute;
-  left: 450px;
-  margin-top: 190px;
+  margin-left: 150px;
+  margin-top: 350px;
   background: transparent;
   transition: background 1s;
   transition: color 0.7s;
@@ -144,6 +146,18 @@ button {
 .seven-boom:hover {
   background: black;
   color: white;
+}
+
+.undo {
+  position: absolute;
+  right: 150px;
+  top: 50px;
+  background: transparent;
+  transition: background 1s;
+}
+
+.undo:hover {
+  background: pink;
 }
 
 .safe-click {

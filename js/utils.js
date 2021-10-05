@@ -1,6 +1,7 @@
 function renderBoard(borad, selector) {
   var strHTML = `<td class="table-header" colspan="${borad.length}">`; //table-header
   var minesLeft = gLevel.MINES - gGame.markedCount;
+  if (gMinesBySevenBoom) minesLeft = gMinesBySevenBoom;
   strHTML += `<div class="mines-marked">${minesLeft}</div>`;
   strHTML += `<div class="smiley"><button onclick="init()" >${gSmiely}</button></div>`;
   strHTML += `<div class="timer">${gSecHundreds}${gSecTens}${gSecUnits}</div></td>`;
@@ -152,7 +153,7 @@ function renderBoardMinesByUser(borad, selector) {
       var className = `cell noContextMenu `;
       className += 'clicked ';
       var tdId = `cell-${i}-${j}`;
-      strHTML += `<td id="${tdId}"  class="${className}" onclick ="putMineHere(this)" >${cell}</td>`;
+      strHTML += `<td id="${tdId}"  class="${className}" onclick ="putMineByUserChoice(this)" >${cell}</td>`;
     }
     strHTML += '</tr>';
   }
