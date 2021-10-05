@@ -131,7 +131,6 @@ function setMines() {
     gBoard[rowIdx][colIdx].isMine = true;
   }
   setMinesNegsToAll();
-  console.log(gBoard);
   renderBoard(gBoard, `tbody`);
 }
 
@@ -291,13 +290,26 @@ function activeHint() {
 }
 
 function useHint(currCell) {
-  toogleNegsDisplay(currCell);
+  var location = currCell.location;
+  var preShownCells = [];
+  for (var i = location.i - 1; i <= location.i + 1; i++) {
+    if (i < 0 || i > gBoard.length - 1) {
+      continue;
+    }
+    for (var j = location.j - 1; j <= location.j + 1; j++) {
+      if (j < 0 || j > gBoard[0].length - 1) continue;
+      var newCell = gBoard[i][j];
+      if (newCell.isShown) preShownCells.push(newCell);
+    }
+  }
+  console.log(preShownCells);
+  toogleNegsDisplay(currCell, []);
   renderBoard(gBoard, `tbody`);
   gHints--;
   updateHintsEl();
   setTimeout(() => {
     gIsHintActive = false;
-    toogleNegsDisplay(currCell);
+    toogleNegsDisplay(currCell, preShownCells);
     renderBoard(gBoard, `tbody`);
   }, 1000);
 }
@@ -365,20 +377,24 @@ function addRightClickListener() {
   }
 }
 
-function toogleNegsDisplay(currCell) {
+function toogleNegsDisplay(currCell, preShownCells) {
   var location = currCell.location;
   for (var i = location.i - 1; i <= location.i + 1; i++) {
     if (i < 0 || i > gBoard.length - 1) {
       continue;
     }
     for (var j = location.j - 1; j <= location.j + 1; j++) {
-      if (j < 0 || j > gBoard[0].length - 1) {
-        continue;
-      }
+      if (j < 0 || j > gBoard[0].length - 1) continue;
       var newCell = gBoard[i][j];
-
       newCell.isShown = gIsHintActive ? true : false;
     }
+  }
+  for (var i = 0; i < preShownCells.length; i++) {
+    var preShownCell = preShownCells[i];
+    var rowIdx = preShownCell.location.i;
+    var colIdx = preShownCell.location.j;
+    var newCell = gBoard[rowIdx][colIdx];
+    newCell.isShown = true;
   }
   renderBoard(gBoard, `tbody`);
 }
