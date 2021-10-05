@@ -159,7 +159,6 @@ function setMinesNegsToAll() {
 //// bonus Manually positioned mines
 function manuallyPositionedMines() {
   gManuallOn = gManuallOn ? false : true;
-  console.log(gManuallOn);
   if (gManuallOn) init();
   if (gMinesByUser === gLevel.MINES) {
     startManuallyGame();
@@ -245,6 +244,7 @@ function cellClicked(elCell) {
     gSmiely = `🤕`; // adjusting game elements
     gLifes--;
     updateLifesEl();
+    checkWin();
     if (gLifes === 0) reset();
     renderBoard(gBoard, `tbody`);
     blowUp(currCell);
@@ -278,11 +278,11 @@ function putFlag(elCell) {
   var currCell = gBoard[location.i][location.j];
   if (currCell.isShown) return;
   if (currCell.isMarked) {
-    currCell.isMarked = false;
     gGame.markedCount--;
+    currCell.isMarked = false;
   } else {
-    currCell.isMarked = true;
     gGame.markedCount++;
+    currCell.isMarked = true;
   }
   checkWin();
   renderBoard(gBoard, `tbody`);
@@ -311,7 +311,10 @@ function checkNegs(currId) {
       }
       if (i === location.i && j === location.j) continue;
       var newCell = gBoard[i][j];
-      if (newCell.isMarked) continue;
+      if (newCell.isMarked) {
+        gGame.markedCount++;
+        continue;
+      }
       if (newCell.isShown) continue;
       if (!newCell.isMine) {
         newCell.isShown = true;
@@ -404,8 +407,8 @@ function updateSafeClickEl() {
 }
 
 function activeSafeClick() {
+  if (gSafeRemain === 0) return;
   gSafeRemain--;
-  if (gSafeRemain < 0) return;
   var emptyLoc = getEmptyCells(gBoard);
   for (var i = 0; i < emptyLoc.length; i++) {
     var rowIdx = emptyLoc[i].i;
@@ -427,10 +430,6 @@ function activeSafeClick() {
 
 function checkWin() {
   var safeCellsNum = gLevel.SIZE * gLevel.SIZE - gLevel.MINES;
-  console.log(`safeCellsNum`, safeCellsNum);
-  console.log(`gGame.shownCount`, gGame.shownCount);
-  console.log(`gGame.markedCount`, gGame.markedCount);
-  console.log(`gLevel.MINES`, gLevel.MINES);
   if (gGame.shownCount === safeCellsNum && gGame.markedCount === gLevel.MINES) {
     gSmiely = `😎`;
     clearInterval(gTimerInterval);
