@@ -27,7 +27,7 @@ h3 {
   width: 40px;
 }
 
-.safe-available{
+.safe-available {
   margin-left: 910px;
   margin-top: 0;
   font-weight: bold;
@@ -90,7 +90,11 @@ button {
   height: 35px;
   font-size: 0.8em;
 }
-.difficulty-btn ,.safe-click {
+
+.difficulty-btn,
+.safe-click,
+.manually-positioned-mines,
+.seven-boom {
   border: 3px solid black;
   color: black;
   font-weight: 800;
@@ -117,14 +121,40 @@ button {
   border-radius: 8px 20px 20px 8px;
 }
 
-.safe-click{
+.manually-positioned-mines {
+  position: absolute;
+  margin-left: 150px;
+  margin-top: 200px;
+  background: transparent;
+  transition: background 1s;
+}
+.manually-positioned-mines:hover {
+  background: lightcoral;
+}
+
+.seven-boom {
+  position: absolute;
+  left: 450px;
+  margin-top: 190px;
+  background: transparent;
+  transition: background 1s;
+  transition: color 0.7s;
+}
+
+.seven-boom:hover {
+  background: black;
+  color: white;
+}
+
+.safe-click {
   position: absolute;
   margin-left: 150px;
   background: transparent;
   transition: background 1s;
 }
 
-.difficulty-btn:hover, .safe-click:hover{
+.difficulty-btn:hover,
+.safe-click:hover {
   background: white;
 }
 
@@ -181,4 +211,7 @@ ul {
   bottom: 20px;
   font-weight: bold;
   font-size: 1em;
+}
+.ready {
+  background-color: red;
 }

@@ -134,3 +134,29 @@ function resetGGame() {
     markedCount: 0,
   };
 }
+
+function renderBoardMinesByUser(borad, selector) {
+  var strHTML = `<td class="table-header" colspan="${borad.length}">`; //table-header
+  var minesLeft = gLevel.MINES - gGame.markedCount;
+  strHTML += `<div class="mines-marked">${minesLeft}</div>`;
+  strHTML += `<div class="smiley"><button onclick="init()" >${gSmiely}</button></div>`;
+  strHTML += `<div class="timer">${gSecHundreds}${gSecTens}${gSecUnits}</div></td>`;
+  //table-body
+  for (var i = 0; i < borad.length; i++) {
+    strHTML += '<tr>';
+    for (var j = 0; j < borad[0].length; j++) {
+      var cell = '';
+      if (borad[i][j].isMine) {
+        cell = MINE;
+      }
+      var className = `cell noContextMenu `;
+      className += 'clicked ';
+      var tdId = `cell-${i}-${j}`;
+      strHTML += `<td id="${tdId}"  class="${className}" onclick ="putMineHere(this)" >${cell}</td>`;
+    }
+    strHTML += '</tr>';
+  }
+  var elContainer = document.querySelector(selector);
+  elContainer.innerHTML = strHTML;
+  addRightClickListener();
+}

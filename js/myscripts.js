@@ -42,6 +42,7 @@ var gLevel = {
 };
 
 var gSecUnits, gSecTens, gSecHundreds;
+var gMinesByUser = 0;
 var gEmptyNegs = [];
 var gIsHintActive;
 var gSafeRemain;
@@ -148,6 +149,65 @@ function setMinesNegsToAll() {
       setMinesNegsCount(gBoard[i][j]);
     }
   }
+}
+
+function manuallyPositionedMines() {
+  if (gMinesByUser === gLevel.MINES) {
+    startManuallyGame();
+    return;
+  }
+  gTime = 0;
+  gSmiely = `😃`;
+  clearInterval(gTimerInterval);
+  gTimerInterval = null;
+  resetTimer();
+  gLifes = gLevel.SIZE === 4 ? 2 : 3;
+  updateLifesEl();
+  gIsHintActive = false;
+  gHints = 3;
+  updateHintsEl();
+  gSafeRemain = 3;
+  updateSafeClick();
+  gMinesByUser = 0;
+  gBoard = buildBoard(gLevel.SIZE);
+  renderBoardMinesByUser(gBoard, `tbody`);
+  gGame.isOn = true;
+}
+
+function startManuallyGame() {
+  gTimerInterval = setInterval(incrementSeconds, 1000);
+  var elPutMineBtn = document.querySelector(`.manually-positioned-mines`);
+  elPutMineBtn.classList.remove(`ready`);
+  setMinesNegsToAll();
+  renderBoard(gBoard, `tbody`);
+}
+
+function putMineByUserChoice(elCell) {
+  var newMineLoc = getCellCoord(elCell.id);
+  var rowIdx = newMineLoc.i;
+  var colIdx = newMineLoc.j;
+  if (gBoard[rowIdx][colIdx].isMine) {
+    gBoard[rowIdx][colIdx].isMine = false;
+    gMinesByUser--;
+    var elPutMineBtn = document.querySelector(`.manually-positioned-mines`);
+    elPutMineBtn.classList.remove(`ready`);
+  } else {
+    if (gMinesByUser >= gLevel.MINES) {
+      return;
+    }
+
+    gBoard[rowIdx][colIdx].isMine = true;
+    gMinesByUser++;
+    if (gMinesByUser === gLevel.MINES) {
+      isUserReadyToStart();
+    }
+  }
+  renderBoardMinesByUser(gBoard, `tbody`);
+}
+
+function isUserReadyToStart() {
+  var elPutMineBtn = document.querySelector(`.manually-positioned-mines`);
+  elPutMineBtn.classList.add(`ready`);
 }
 
 function setMinesNegsCount(cell) {
@@ -302,7 +362,6 @@ function useHint(currCell) {
       if (newCell.isShown) preShownCells.push(newCell);
     }
   }
-  console.log(preShownCells);
   toogleNegsDisplay(currCell, []);
   renderBoard(gBoard, `tbody`);
   gHints--;
@@ -444,4 +503,8 @@ function isNewRecord(difficulty, time) {
     var elStorage = document.querySelector(`.storage`);
     elStorage.innerText = `Sorry! No Web Storage support..`;
   }
+}
+
+function SevenBoom(){
+  console.log(`7 boom`);
 }
