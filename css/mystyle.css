@@ -113,7 +113,7 @@ button {
   border-radius: 20px 8px 8px 20px;
 }
 
-.difficulty-btn:last-of-type {
+.difficulty-btn:nth-child(3) {
   border-radius: 8px 20px 20px 8px;
 }
 
