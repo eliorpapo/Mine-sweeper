@@ -72,12 +72,10 @@ function init() {
   gBoard = buildBoard(gLevel.SIZE);
   setMines();
   gLifes = gLevel.SIZE === 4 ? 2 : 3;
-  updateLifesEl();
   gIsHintActive = false;
   gHints = 3;
-  updateHintsEl();
   gSafeRemain = 3;
-  updateSafeClickEl();
+  updateAllUsableEls();
 }
 
 function setSize(size) {
@@ -159,11 +157,13 @@ function setMinesNegsToAll() {
     }
   }
 }
+
 //// bonus Manually positioned mines
 function manuallyPositionedMines() {
   gManuallOn = gManuallOn ? false : true;
   if (gManuallOn) init();
   if (gMinesByUser === gLevel.MINES) {
+    // after all mines are deployed
     startManuallyGame();
     return;
   }
@@ -182,6 +182,7 @@ function startManuallyGame() {
 }
 
 function putMineByUserChoice(elCell) {
+  //get the cell the user pressed
   var newMineLoc = getCellCoord(elCell.id);
   var rowIdx = newMineLoc.i;
   var colIdx = newMineLoc.j;
@@ -191,15 +192,10 @@ function putMineByUserChoice(elCell) {
     var elPutMineBtn = document.querySelector(`.manually-positioned-mines`);
     elPutMineBtn.classList.remove(`ready`);
   } else {
-    if (gMinesByUser >= gLevel.MINES) {
-      return;
-    }
-
+    if (gMinesByUser >= gLevel.MINES) return;
     gBoard[rowIdx][colIdx].isMine = true;
     gMinesByUser++;
-    if (gMinesByUser === gLevel.MINES) {
-      isUserReadyToStart();
-    }
+    if (gMinesByUser === gLevel.MINES) isUserReadyToStart();
   }
   renderBoardMinesByUser(gBoard, `tbody`);
 }
@@ -225,7 +221,6 @@ function cellClicked(elCell) {
   var colIdx = location.j;
   var currCell = gBoard[rowIdx][colIdx];
   if (gIsHintActive) {
-    // hints
     useHint(currCell);
     return;
   }
@@ -276,7 +271,7 @@ function incrementSeconds() {
 }
 
 function putFlag(elCell) {
-  var strCellId = elCell.srcElement.id; //getting the location from the element
+  var strCellId = elCell.srcElement.id; //getting the cell from the elemnt cell
   var location = getCellCoord(strCellId);
   var currCell = gBoard[location.i][location.j];
   if (currCell.isShown) return;
@@ -314,20 +309,18 @@ function checkNegs(currId) {
       }
       if (i === location.i && j === location.j) continue;
       var newCell = gBoard[i][j];
-      if (newCell.isMarked) {
-        gGame.markedCount++;
-        continue;
-      }
+      if (newCell.isMarked) continue;
       if (newCell.isShown) continue;
       if (!newCell.isMine) {
         newCell.isShown = true;
         gGame.shownCount++;
-        if (newCell.minesAroundCount === 0) gEmptyNegs.push(newCell);
+        if (newCell.minesAroundCount === 0) gEmptyNegs.push(newCell); // the array hold all the cells with no mines negs
         renderBoard(gBoard, `tbody`);
       }
     }
   }
   for (var i = 0; i < gEmptyNegs.length; i++) {
+    //go throw all the empty cells from the array
     var currCell = gEmptyNegs.pop();
     var newCellId = getCellId(currCell.location);
     checkNegs(newCellId);
@@ -340,10 +333,13 @@ function blowUp(cell) {
   elCell.style.backgroundColor = 'red';
   setTimeout(() => {
     renderBoard(gBoard, `tbody`);
-  }, 1000);
+  }, 800);
 }
+
 // bonus Add support for HINTS
+
 function activeHint() {
+  //change the look
   if (gIsHintActive) {
     gIsHintActive = false;
     var elHint = document.querySelector(`.hint`);
@@ -357,11 +353,9 @@ function activeHint() {
 
 function useHint(currCell) {
   var location = currCell.location;
-  var preShownCells = [];
+  var preShownCells = []; // to not change pre shown cells
   for (var i = location.i - 1; i <= location.i + 1; i++) {
-    if (i < 0 || i > gBoard.length - 1) {
-      continue;
-    }
+    if (i < 0 || i > gBoard.length - 1) continue;
     for (var j = location.j - 1; j <= location.j + 1; j++) {
       if (j < 0 || j > gBoard[0].length - 1) continue;
       var newCell = gBoard[i][j];
@@ -372,8 +366,8 @@ function useHint(currCell) {
   renderBoard(gBoard, `tbody`);
   gHints--;
   updateHintsEl();
+  gIsHintActive = false;
   setTimeout(() => {
-    gIsHintActive = false;
     toogleNegsDisplay(currCell, preShownCells);
     renderBoard(gBoard, `tbody`);
   }, 1000);
@@ -382,9 +376,7 @@ function useHint(currCell) {
 function toogleNegsDisplay(currCell, preShownCells) {
   var location = currCell.location;
   for (var i = location.i - 1; i <= location.i + 1; i++) {
-    if (i < 0 || i > gBoard.length - 1) {
-      continue;
-    }
+    if (i < 0 || i > gBoard.length - 1) continue;
     for (var j = location.j - 1; j <= location.j + 1; j++) {
       if (j < 0 || j > gBoard[0].length - 1) continue;
       var newCell = gBoard[i][j];
@@ -404,6 +396,7 @@ function toogleNegsDisplay(currCell, preShownCells) {
 //end  bonus Add support for HINTS
 
 //  bonus Safe click
+
 function updateSafeClickEl() {
   var elsSafeRemain = document.querySelector(`.safe-available`);
   elsSafeRemain.innerText = `${gSafeRemain} pressed left`;
@@ -412,20 +405,20 @@ function updateSafeClickEl() {
 function activeSafeClick() {
   if (gSafeRemain === 0) return;
   gSafeRemain--;
-  var emptyLoc = getEmptyCells(gBoard);
-  for (var i = 0; i < emptyLoc.length; i++) {
-    var rowIdx = emptyLoc[i].i;
-    var colIdx = emptyLoc[i].j;
+  var emptyLocs = getEmptyCells(gBoard);
+  for (var i = 0; i < emptyLocs.length; i++) {
+    var rowIdx = emptyLocs[i].i;
+    var colIdx = emptyLocs[i].j;
     if (gBoard[rowIdx][colIdx].isShown) {
-      emptyLoc.splice(i, 1);
+      emptyLocs.splice(i, 1);
       i--;
     }
   }
-  var ranIdx = getRandomInt(0, emptyLoc.length - 1);
-  var safeCell = emptyLoc.splice(ranIdx, 1);
+  var ranIdx = getRandomInt(0, emptyLocs.length - 1); // get the loc of a ran cell
+  var safeCell = emptyLocs.splice(ranIdx, 1);
   var safeCellId = getCellId(safeCell[0]);
   var elSafeCell = document.querySelector(`#${safeCellId}`);
-  elSafeCell.style.backgroundColor = 'lightblue';
+  elSafeCell.style.backgroundColor = 'lightblue'; // change the chosen cell
   updateSafeClickEl();
 }
 
@@ -523,18 +516,17 @@ function isNewRecord(difficulty, time) {
 // bonus seven boom
 
 function sevenBoom() {
+  // change all to adjust for the 7 boom game
   gTime = 0;
   gSmiely = `😃`;
   clearInterval(gTimerInterval);
   gTimerInterval = null;
   resetTimer();
   gLifes = gLevel.SIZE === 4 ? 2 : 3;
-  updateLifesEl();
   gIsHintActive = false;
   gHints = 3;
-  updateHintsEl();
   gSafeRemain = 3;
-  updateSafeClickEl();
+  updateAllUsableEls();
   gMinesByUser = 0;
   gBoard = buildBoard(gLevel.SIZE);
   gGame.isOn = true;
@@ -549,7 +541,7 @@ function putMineBySevenBoom() {
       var countUnit = count % 10;
       var countTens = (count - countUnit) / 10;
       if (
-        (count !== 0 && count % 7 === 0) ||
+        (count !== 0 && count % 7 === 0) || /// 7 boom rules
         countUnit === 7 ||
         countTens === 7
       ) {
@@ -573,12 +565,11 @@ function undo() {
     return;
   }
   var preMove = gPreMoves.pop();
+  //  update all the el for the pre move
   gLifes = preMove.gLifes;
-  updateLifesEl();
   gHints = preMove.gHints;
-  updateHintsEl();
   gSafeRemain = preMove.gSafeRemain;
-  updateSafeClickEl();
+  updateAllUsableEls();
   gGame.isOn = preMove.gGame[0];
   gGame.shownCount = preMove.gGame[1];
   gGame.markedCount = preMove.gGame[2];
@@ -618,4 +609,10 @@ function getgBoard() {
     board.push(row);
   }
   return board;
+}
+
+function updateAllUsableEls() {
+  updateSafeClickEl();
+  updateHintsEl();
+  updateLifesEl();
 }
